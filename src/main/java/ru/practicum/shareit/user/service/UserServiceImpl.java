@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Long userId, UserDto user) {
-        log.info(String.format("Start update idUser = [%s]", user.getId()));
+        log.info(String.format("Start update idUser = %s", user.getId()));
         if (!users.containsKey(userId))
             throw new ObjectExistException("User doesn't exists");
         checkUser(userId, user);
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         boolean isUnique = users.values().stream()
                 .anyMatch(o -> o.getEmail().equals(user.getEmail()) && userId != o.getId());
         if (isUnique)
-            throw new ObjectCreateException("User with this email already exists");
+            throw new ObjectCreateException("User with this e-mail already exists");
         log.info("User is correct");
     }
 }

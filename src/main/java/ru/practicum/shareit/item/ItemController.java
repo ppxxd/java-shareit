@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item;
 
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

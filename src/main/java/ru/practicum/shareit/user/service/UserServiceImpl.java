@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(UserDto user) {
-        log.info(String.format("Create user: %s", user));
+        log.info("Create user: {}", user);
         checkUser(id, user);
         user.setId(id);
         users.put(id, UserMapper.toUser(user));
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(Long id) {
-        log.info(String.format("Get user by id: %s", id));
+        log.info("Get user by id: {}", id);
         if (!users.containsKey(id))
             throw new ObjectExistException("User doesn't exists");
         log.info("User: {}", UserMapper.toUserDto(users.get(id)));
@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(Long userId, UserDto user) {
-        log.info(String.format("Start update idUser = %s", user.getId()));
+        log.info("Start update idUser: {}", user.getId());
         if (!users.containsKey(userId))
             throw new ObjectExistException("User doesn't exists");
         checkUser(userId, user);

@@ -25,7 +25,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto addItem(ItemDto item, Long idUser) {
-        log.info(String.format("Create item: %s", item));
+        log.info("Create item: {}", item);
         item.setOwner(UserMapper.toUser(userService.getUser(idUser)));
         item.setId(id++);
         items.put(item.getId(), ItemMapper.toItem(item));
@@ -34,7 +34,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(Long id) {
-        log.info(String.format("Get item by id: %s", id));
+        log.info("Get item by id: {}", id);
         return ItemMapper.toItemDto(items.get(id));
     }
 
@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(Long id, ItemDto item, Long idUser) {
-        log.info(String.format("Start update item = [%s]", id));
+        log.info("Start update item: {}", id);
         checkItemOnUpdate(id, item, idUser);
 
         Item itemToUpdate = items.get(id);

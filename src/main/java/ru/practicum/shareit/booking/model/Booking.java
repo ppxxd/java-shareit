@@ -61,7 +61,7 @@ public class Booking {
             try {
                 return BookingState.valueOf(source);
             } catch (Exception e) {
-                String message = String.format("Неизвестное состояние: %S", source);
+                String message = String.format("Unknown state: %S", source);
                 throw new InvalidDataException(message);
             }
         }

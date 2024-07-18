@@ -9,18 +9,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler {
     @ExceptionHandler({ObjectExistException.class,})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleObjectExistenceException(final ObjectExistException ex) {
+    public ErrorResponse handleObjectExistException(final ObjectExistException ex) {
         return new ErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler(ObjectAccessException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleObjectAccessException(final ObjectAccessException ex) {
         return new ErrorResponse(ex.getMessage());
     }
 
     @ExceptionHandler({ObjectCreateException.class,})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleObjectCreateException(final ObjectCreateException ex) {
         return new ErrorResponse(ex.getMessage());
     }
@@ -28,6 +28,18 @@ public class ErrorHandler {
     @ExceptionHandler({ObjectUpdateException.class,})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleObjectUpdateException(final ObjectUpdateException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler({ObjectNotAvailableException.class,})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleObjectNotAvailableException(final ObjectNotAvailableException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler({InvalidDataException.class,})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidDataException(final InvalidDataException ex) {
         return new ErrorResponse(ex.getMessage());
     }
 }

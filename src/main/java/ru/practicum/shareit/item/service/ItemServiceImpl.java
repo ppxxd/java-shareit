@@ -72,8 +72,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> searchItem(String text) {
-        if (text.isBlank())
+        if (text.isBlank()) {
             return new ArrayList<>();
+        }
 
         return repository.findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase(text, text)
                 .stream()

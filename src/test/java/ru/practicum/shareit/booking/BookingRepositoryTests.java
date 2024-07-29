@@ -113,8 +113,8 @@ public class BookingRepositoryTests {
 
     @Test
     public void findFirstBookingByEndBeforeAndItemIdAndBookerIdAndStatusTest() {
-        Optional<Booking> result = bookingRepository.
-                findFirstBookingByEndBeforeAndItemIdAndBookerIdAndStatus(CURRENT_TIME.plusHours(10),
+        Optional<Booking> result = bookingRepository
+                .findFirstBookingByEndBeforeAndItemIdAndBookerIdAndStatus(CURRENT_TIME.plusHours(10),
                         1L, 2L, BookingStatus.WAITING);
 
         assertThat(result.isPresent(), is(true));

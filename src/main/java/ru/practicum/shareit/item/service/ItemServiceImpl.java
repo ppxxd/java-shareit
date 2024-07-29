@@ -2,6 +2,8 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.service.ItemBookingService;
@@ -13,6 +15,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -28,11 +32,13 @@ public class ItemServiceImpl implements ItemService {
     private final ItemBookingService bookingService;
     private final CommentService commentService;
     private final ItemRepository repository;
+    private final ItemRequestRepository requestRepository;
 
     @Override
-    public ItemDto addItem(ItemDto item, Long idUser) {
-        item.setOwner(UserMapper.toUser(userService.getUser(idUser)));
-        return ItemMapper.toItemDto(repository.save(ItemMapper.toItem(item)));
+    public ItemDto addItem(ItemDto item, Long userId) {
+        item.setOwner(UserMapper.toUser(userService.getUser(userId)));
+        ItemRequest request = item.getRequestID() == null ? null : requestRepository.getReferenceById(item.getRequestID());
+        return ItemMapper.toItemDto(repository.save(ItemMapper.toItem(item, request)));
     }
 
     @Override
@@ -45,8 +51,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getItemsList(Long idUser) {
-        return repository.findAllByOwnerId(idUser).stream()
+    public List<ItemDto> getItemsList(Long userId, int from, int size) {
+        return repository.findAllByOwnerId(userId, createPageable(from, size)).stream()
                 .map(o -> {
                     o.setLastBooking(bookingService.getLastBooking(o.getId()));
                     o.setNextBooking(bookingService.getNextBooking(o.getId()));
@@ -58,9 +64,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public ItemDto updateItem(Long id, ItemDto item, Long idUser) {
+    public ItemDto updateItem(Long id, ItemDto item, Long userId) {
         Item itemToUpdate = getItemById(id);
-        checkItemOnUpdate(itemToUpdate, item, idUser);
+        checkItemOnUpdate(itemToUpdate, item, userId);
 
         itemToUpdate.setName(item.getName() == null ? itemToUpdate.getName() : item.getName());
         itemToUpdate.setDescription(item.getDescription() == null ? itemToUpdate.getDescription() : item.getDescription());
@@ -71,12 +77,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItem(String text) {
+    public List<ItemDto> searchItem(String text, int from, int size) {
         if (text.isBlank()) {
             return new ArrayList<>();
         }
 
-        return repository.findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase(text, text)
+        return repository.findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase(text, text,
+                        createPageable(from, size))
                 .stream()
                 .filter(Item::isAvailable)
                 .map(ItemMapper::toItemDto)
@@ -92,12 +99,17 @@ public class ItemServiceImpl implements ItemService {
     private void checkItemOnUpdate(Item itemToUpdate, ItemDto item, Long userId) {
         checkItemOwner(itemToUpdate, userId);
 
-        if (item.getOwner() != null || item.getRequest() != null)
+        if (item.getOwner() != null || item.getRequestID() != null)
             throw new ObjectUpdateException("Эти поля не могут быть обновлены!");
     }
 
     private Item getItemById(long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ObjectExistException("Вещь не существует!"));
+    }
+
+    private Pageable createPageable(int from, int size) {
+        int page = from == 0 ? 0 : from / size;
+        return PageRequest.of(page, size);
     }
 }

@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -74,10 +76,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllByUser(long userId, BookingState bookingState) {
+    public List<BookingDto> getAllByUser(long userId, BookingState bookingState, int from, int size) {
         User user = getUserById(userId);
 
-        return repository.findAllByBookerId(user.getId()).stream()
+        return repository.findAllByBookerIdOrderByStartDesc(user.getId(), createPageable(from, size)).stream()
                 .filter(o -> filterByState(o, bookingState))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::bookingToDto)
@@ -85,10 +87,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsByItems(long userId, BookingState bookingState) {
+    public List<BookingDto> getBookingsByItems(long userId, BookingState bookingState, int from, int size) {
         User user = getUserById(userId);
 
-        return repository.findAllByItemOwnerId(user.getId()).stream()
+        return repository.findAllByBookerIdOrderByStartDesc(user.getId(), createPageable(from, size)).stream()
                 .filter(o -> filterByState(o, bookingState))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::bookingToDto)
@@ -134,5 +136,10 @@ public class BookingServiceImpl implements BookingService {
     private void checkDate(BookingDto booking) {
         if (booking.getStart().isAfter(booking.getEnd()) || booking.getStart().equals(booking.getEnd()))
             throw new ObjectCreateException("Время окончания бронирования не может быть после/равным началу!");
+    }
+
+    private Pageable createPageable(int from, int size) {
+        int page = from == 0 ? 0 : from / size;
+        return PageRequest.of(page, size);
     }
 }

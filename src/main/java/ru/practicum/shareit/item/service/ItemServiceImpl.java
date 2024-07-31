@@ -2,8 +2,6 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.service.ItemBookingService;
@@ -19,6 +17,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.util.PageableUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getItemsList(Long userId, int from, int size) {
-        return repository.findAllByOwnerId(userId, createPageable(from, size)).stream()
+        return repository.findAllByOwnerId(userId, PageableUtil.makePageable(from, size)).stream()
                 .map(o -> {
                     o.setLastBooking(bookingService.getLastBooking(o.getId()));
                     o.setNextBooking(bookingService.getNextBooking(o.getId()));
@@ -83,7 +82,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         return repository.findAllByDescriptionContainingIgnoreCaseOrNameContainingIgnoreCase(text, text,
-                        createPageable(from, size))
+                        PageableUtil.makePageable(from, size))
                 .stream()
                 .filter(Item::isAvailable)
                 .map(ItemMapper::toItemDto)
@@ -106,10 +105,5 @@ public class ItemServiceImpl implements ItemService {
     private Item getItemById(long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new ObjectExistException("Вещь не существует!"));
-    }
-
-    private Pageable createPageable(int from, int size) {
-        int page = from == 0 ? 0 : from / size;
-        return PageRequest.of(page, size);
     }
 }

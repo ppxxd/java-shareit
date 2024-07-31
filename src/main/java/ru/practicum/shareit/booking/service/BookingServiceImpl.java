@@ -1,8 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -18,6 +16,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.util.PageableUtil;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -79,7 +78,8 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getAllByUser(long userId, BookingState bookingState, int from, int size) {
         User user = getUserById(userId);
 
-        return repository.findAllByBookerIdOrderByStartDesc(user.getId(), createPageable(from, size)).stream()
+        return repository.findAllByBookerIdOrderByStartDesc(user.getId(), PageableUtil.makePageable(from, size))
+                .stream()
                 .filter(o -> filterByState(o, bookingState))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::bookingToDto)
@@ -90,7 +90,8 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getBookingsByItems(long userId, BookingState bookingState, int from, int size) {
         User user = getUserById(userId);
 
-        return repository.findAllByBookerIdOrderByStartDesc(user.getId(), createPageable(from, size)).stream()
+        return repository.findAllByBookerIdOrderByStartDesc(user.getId(), PageableUtil.makePageable(from, size))
+                .stream()
                 .filter(o -> filterByState(o, bookingState))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::bookingToDto)
@@ -130,10 +131,5 @@ public class BookingServiceImpl implements BookingService {
     private void checkDate(BookingDto booking) {
         if (booking.getStart().isAfter(booking.getEnd()) || booking.getStart().equals(booking.getEnd()))
             throw new ObjectCreateException("Время окончания бронирования не может быть после/равным началу!");
-    }
-
-    private Pageable createPageable(int from, int size) {
-        int page = from == 0 ? 0 : from / size;
-        return PageRequest.of(page, size);
     }
 }

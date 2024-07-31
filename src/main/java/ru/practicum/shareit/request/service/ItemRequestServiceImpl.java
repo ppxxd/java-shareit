@@ -1,7 +1,7 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import ru.practicum.shareit.util.PageableUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +54,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> findAllRequests(int from, int size, long userId) {
         validateUser(userId);
-        Pageable pageable = makePageable(from, size);
+        Pageable pageable = PageableUtil.makePageable(from, size);
 
         return requestRepository.findAllByRequestorIdNot(userId, pageable).stream()
                 .map(request -> {
@@ -83,10 +83,5 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (!userRepository.existsById(userId)) {
             throw new ObjectExistException(String.format("User with id: %d not found!", userId));
         }
-    }
-
-    private Pageable makePageable(int from, int size) {
-        int page = from == 0 ? 0 : from / size;
-        return PageRequest.of(page, size);
     }
 }

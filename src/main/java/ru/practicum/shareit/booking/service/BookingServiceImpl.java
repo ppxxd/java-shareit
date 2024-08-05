@@ -16,6 +16,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.util.PageableUtil;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -74,10 +75,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllByUser(long userId, BookingState bookingState) {
+    public List<BookingDto> getAllByUser(long userId, BookingState bookingState, int from, int size) {
         User user = getUserById(userId);
 
-        return repository.findAllByBookerId(user.getId()).stream()
+        return repository.findAllByBookerIdOrderByStartDesc(user.getId(), PageableUtil.makePageable(from, size))
+                .stream()
                 .filter(o -> filterByState(o, bookingState))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::bookingToDto)
@@ -85,10 +87,11 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsByItems(long userId, BookingState bookingState) {
+    public List<BookingDto> getBookingsByItems(long userId, BookingState bookingState, int from, int size) {
         User user = getUserById(userId);
 
-        return repository.findAllByItemOwnerId(user.getId()).stream()
+        return repository.findAllByBookerIdOrderByStartDesc(user.getId(), PageableUtil.makePageable(from, size))
+                .stream()
                 .filter(o -> filterByState(o, bookingState))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .map(BookingMapper::bookingToDto)
@@ -98,22 +101,16 @@ public class BookingServiceImpl implements BookingService {
     private boolean filterByState(Booking booking, BookingState bookingState) {
         final LocalDateTime currentTime = LocalDateTime.now();
 
-        switch (bookingState) {
-            case REJECTED:
-                return booking.getStatus().equals(BookingStatus.REJECTED);
-            case PAST:
-                return booking.getEnd().isBefore(currentTime);
-            case CURRENT:
-                return booking.getStart().isBefore(currentTime) &&
-                        booking.getEnd().isAfter(currentTime);
-            case FUTURE:
-                return booking.getStart().isAfter(currentTime) ||
-                        booking.getStart().equals(currentTime);
-            case WAITING:
-                return booking.getStatus().equals(BookingStatus.WAITING);
-            default:
-                return true;
-        }
+        return switch (bookingState) {
+            case REJECTED -> booking.getStatus().equals(BookingStatus.REJECTED);
+            case PAST -> booking.getEnd().isBefore(currentTime);
+            case CURRENT -> booking.getStart().isBefore(currentTime) &&
+                    booking.getEnd().isAfter(currentTime);
+            case FUTURE -> booking.getStart().isAfter(currentTime) ||
+                    booking.getStart().equals(currentTime);
+            case WAITING -> booking.getStatus().equals(BookingStatus.WAITING);
+            default -> true;
+        };
     }
 
     private Booking getBookingById(long id) {

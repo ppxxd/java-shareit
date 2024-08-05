@@ -55,15 +55,21 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<List<BookingDto>> getAllByUser(@RequestParam(defaultValue = "ALL") String state,
-                                                         @RequestHeader(value = SHARER_USER_ID_HEADER) Long userId) {
+                                                         @RequestHeader(value = SHARER_USER_ID_HEADER) Long userId,
+                                                         @RequestParam(name = "from", defaultValue = "0") int from,
+                                                         @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Получен запрос GET /bookings/");
-        return new ResponseEntity<>(bookingService.getAllByUser(userId, BookingState.convert(state)), HttpStatus.OK);
+        return new ResponseEntity<>(bookingService.getAllByUser(userId, BookingState.convert(state), from, size),
+                HttpStatus.OK);
     }
 
     @GetMapping("/owner")
     public ResponseEntity<List<BookingDto>> getBookingsByItems(@RequestParam(defaultValue = "ALL") String state,
-                                                               @RequestHeader(value = SHARER_USER_ID_HEADER) long userId) {
+                                                               @RequestHeader(value = SHARER_USER_ID_HEADER) long userId,
+                                                               @RequestParam(name = "from", defaultValue = "0") int from,
+                                                               @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Получен запрос GET /bookings/owner");
-        return new ResponseEntity<>(bookingService.getBookingsByItems(userId, BookingState.convert(state)), HttpStatus.OK);
+        return new ResponseEntity<>(bookingService.getBookingsByItems(userId, BookingState.convert(state), from, size),
+                HttpStatus.OK);
     }
 }

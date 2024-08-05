@@ -1,23 +1,23 @@
 package ru.practicum.shareit.request.model;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Entity
 @Table(name = "requests")
+@AllArgsConstructor
 @RequiredArgsConstructor
+@Builder
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +28,6 @@ public class ItemRequest {
     private User requestor;
     @Column(name = "creation_date")
     private Date created;
+    @OneToMany
+    private List<Item> items;
 }

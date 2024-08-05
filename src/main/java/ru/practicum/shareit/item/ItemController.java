@@ -60,15 +60,19 @@ public class ItemController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemDto>> getItemsList(@RequestHeader(value = SHARER_USER_ID_HEADER) Long userId) {
+    public ResponseEntity<List<ItemDto>> getItemsList(@RequestHeader(value = SHARER_USER_ID_HEADER) Long userId,
+                                                      @RequestParam(name = "from", defaultValue = "0") int from,
+                                                      @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Получен запрос GET /items/.");
-        return new ResponseEntity<>(itemService.getItemsList(userId), HttpStatus.OK);
+        return new ResponseEntity<>(itemService.getItemsList(userId, from, size), HttpStatus.OK);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ItemDto>> searchItems(@RequestParam String text) {
+    public ResponseEntity<List<ItemDto>> searchItems(@RequestParam String text,
+                                                     @RequestParam(name = "from", defaultValue = "0") int from,
+                                                     @RequestParam(name = "size", defaultValue = "10") int size) {
         log.info("Получен запрос GET /items/search.");
-        return new ResponseEntity<>(itemService.searchItem(text), HttpStatus.OK);
+        return new ResponseEntity<>(itemService.searchItem(text, from, size), HttpStatus.OK);
     }
 
     @PostMapping("/{itemId}/comment")

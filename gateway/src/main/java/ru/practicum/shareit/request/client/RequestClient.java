@@ -27,7 +27,7 @@ public class RequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getUserRequests(long userId) {
-        return get("/" + userId);
+        return get("", userId);
     }
 
     public ResponseEntity<Object> addRequest(ItemRequestDto request, long userId) {

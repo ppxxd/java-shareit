@@ -13,9 +13,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Booking.*;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.BookingServiceImpl;
-import ru.practicum.shareit.exception.ObjectAccessException;
-import ru.practicum.shareit.exception.ObjectNotAvailableException;
-import ru.practicum.shareit.exception.ObjectCreateException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -92,14 +90,14 @@ public class BookingUnitTests {
     }
 
     @Test
-    public void addBooking_AndExpectAvailabilityException() {
+    public void addBooking_AndExpectExistException() {
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         item.setAvailable(false);
 
-        ObjectNotAvailableException exception = assertThrows(ObjectNotAvailableException.class, () ->
+        ObjectExistException exception = assertThrows(ObjectExistException.class, () ->
                 bookingService.addBooking(BookingMapper.bookingToDto(booking), 1L));
 
-        assertThat(exception.getMessage(), is("Вещь не доступна!"));
+        assertThat(exception.getMessage(), is("Пользователь не существует!"));
     }
 
     @Test
@@ -114,11 +112,11 @@ public class BookingUnitTests {
     }
 
     @Test
-    public void approveBooking_AndExpectAccessError() {
+    public void approveBooking_AndWrongOwnerException() {
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
 
-        ObjectAccessException exception = assertThrows(ObjectAccessException.class, () ->
+        ObjectWrongOwnerException exception = assertThrows(ObjectWrongOwnerException.class, () ->
                 bookingService.approveBooking(1L, true, 2L));
         assertThat(exception.getMessage(), is("У вас нет доступа к данному бронированию!"));
     }

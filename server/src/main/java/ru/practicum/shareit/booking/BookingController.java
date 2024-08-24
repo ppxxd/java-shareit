@@ -32,44 +32,37 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<BookingDto> addBooking(@RequestBody @Valid BookingDto booking,
+    public BookingDto addBooking(@RequestBody @Valid BookingDto booking,
                                                  @RequestHeader(value = SHARER_USER_ID_HEADER) long userId) {
-        log.info("Получен запрос POST /bookings/.");
-        return new ResponseEntity<>(bookingService.addBooking(booking, userId), HttpStatus.OK);
+        return bookingService.addBooking(booking, userId);
     }
 
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<BookingDto> approveBooking(@PathVariable long bookingId,
+    public BookingDto approveBooking(@PathVariable long bookingId,
                                                      @RequestParam boolean approved,
                                                      @RequestHeader(value = SHARER_USER_ID_HEADER) long userId) {
-        log.info("Получен запрос PATCH /bookings/{bookingId}");
-        return new ResponseEntity<>(bookingService.approveBooking(bookingId, approved, userId), HttpStatus.OK);
+        return bookingService.approveBooking(bookingId, approved, userId);
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<BookingDto> getBookingById(@PathVariable long bookingId,
+    public BookingDto getBookingById(@PathVariable long bookingId,
                                                      @RequestHeader(value = SHARER_USER_ID_HEADER) long userId) {
-        log.info("Получен запрос GET /bookings/{bookingId}");
-        return new ResponseEntity<>(bookingService.getBooking(bookingId, userId), HttpStatus.OK);
+        return bookingService.getBooking(bookingId, userId);
     }
 
     @GetMapping
-    public ResponseEntity<List<BookingDto>> getAllByUser(@RequestParam(defaultValue = "ALL") String state,
+    public List<BookingDto> getAllByUser(@RequestParam(defaultValue = "ALL") String state,
                                                          @RequestHeader(value = SHARER_USER_ID_HEADER) Long userId,
                                                          @RequestParam(name = "from", defaultValue = "0") int from,
                                                          @RequestParam(name = "size", defaultValue = "10") int size) {
-        log.info("Получен запрос GET /bookings/");
-        return new ResponseEntity<>(bookingService.getAllByUser(userId, BookingState.convert(state), from, size),
-                HttpStatus.OK);
+        return bookingService.getAllByUser(userId, BookingState.convert(state), from, size);
     }
 
     @GetMapping("/owner")
-    public ResponseEntity<List<BookingDto>> getBookingsByItems(@RequestParam(defaultValue = "ALL") String state,
+    public List<BookingDto> getBookingsByItems(@RequestParam(defaultValue = "ALL") String state,
                                                                @RequestHeader(value = SHARER_USER_ID_HEADER) long userId,
                                                                @RequestParam(name = "from", defaultValue = "0") int from,
                                                                @RequestParam(name = "size", defaultValue = "10") int size) {
-        log.info("Получен запрос GET /bookings/owner");
-        return new ResponseEntity<>(bookingService.getBookingsByItems(userId, BookingState.convert(state), from, size),
-                HttpStatus.OK);
+        return bookingService.getBookingsByItems(userId, BookingState.convert(state), from, size);
     }
 }

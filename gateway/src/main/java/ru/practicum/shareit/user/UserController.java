@@ -47,7 +47,6 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable Long userId) {
         log.info("Получен запрос DELETE /users/{userId}.");
         userClient.deleteUser(userId);
-        log.info("User {} was deleted.", userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

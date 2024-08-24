@@ -25,36 +25,30 @@ public class UserController {
 
     @SneakyThrows
     @PostMapping
-    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto user) {
-        log.info("Получен запрос POST /users/.");
-        return new ResponseEntity<>(userService.addUser(user), HttpStatus.OK);
+    public UserDto addUser(@Valid @RequestBody UserDto user) {
+        return userService.addUser(user);
     }
 
     @SneakyThrows
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long userId) {
-        log.info("Получен запрос GET /users/{userId}.");
-        return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
+    public UserDto getUser(@PathVariable Long userId) {
+        return userService.getUser(userId);
     }
 
     @SneakyThrows
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long userId, @RequestBody UserDto user) {
-        log.info("Получен запрос PATCH /users/{userId}.");
-        return new ResponseEntity<>(userService.updateUser(userId, user), HttpStatus.OK);
+    public UserDto updateUser(@PathVariable Long userId, @RequestBody UserDto user) {
+        return userService.updateUser(userId, user);
     }
 
     @SneakyThrows
     @DeleteMapping("/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
-        log.info("Получен запрос DELETE /users/{userId}.");
+    public void deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
-        return new ResponseEntity<>(String.format("User %s was deleted", userId), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAll() {
-        log.info("Получен запрос GET /users/.");
-        return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+    public List<UserDto> getAll() {
+        return userService.getAll();
     }
 }

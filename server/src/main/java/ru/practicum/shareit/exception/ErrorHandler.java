@@ -42,4 +42,10 @@ public class ErrorHandler {
     public ErrorResponse handleInvalidDataException(final InvalidDataException ex) {
         return new ErrorResponse(ex.getMessage());
     }
+
+    @ExceptionHandler(ObjectWrongOwnerException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleObjectWrongOwnerException(final ObjectWrongOwnerException ex) {
+        return new ErrorResponse(ex.getMessage());
+    }
 }

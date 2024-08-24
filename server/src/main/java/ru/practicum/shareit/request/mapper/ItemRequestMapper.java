@@ -19,12 +19,12 @@ public class ItemRequestMapper {
                 .build();
     }
 
-    public static ItemRequest toRequest(ItemRequestDto request, User requestor, List<Item> items) {
+    public static ItemRequest toRequest(ItemRequestDto request, User requester, List<Item> items) {
         return ItemRequest.builder()
                 .id(request.getId())
                 .description(request.getDescription())
                 .created(request.getCreated())
-                .requestor(requestor)
+                .requestor(requester)
                 .items(items)
                 .build();
     }

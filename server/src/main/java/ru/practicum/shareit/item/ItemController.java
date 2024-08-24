@@ -38,48 +38,42 @@ public class ItemController {
 
     @SneakyThrows
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto> getItem(@PathVariable Long itemId,
+    public ItemDto getItem(@PathVariable Long itemId,
                                            @RequestHeader(SHARER_USER_ID_HEADER) long userId) {
-        log.info("Получен запрос GET /items/{itemId}.");
-        return new ResponseEntity<>(itemService.getItem(itemId, userId), HttpStatus.OK);
+        return itemService.getItem(itemId, userId);
     }
 
     @PostMapping
-    public ResponseEntity<ItemDto> addItem(@Valid @RequestBody ItemDto item,
+    public ItemDto addItem(@Valid @RequestBody ItemDto item,
                                            @RequestHeader(value = SHARER_USER_ID_HEADER) Long userId) {
-        log.info("Получен запрос POST /items/.");
-        return new ResponseEntity<>(itemService.addItem(item, userId), HttpStatus.OK);
+        return itemService.addItem(item, userId);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<ItemDto> updateItem(@PathVariable Long itemId,
+    public ItemDto updateItem(@PathVariable Long itemId,
                                               @RequestBody ItemDto item,
                                               @RequestHeader(value = SHARER_USER_ID_HEADER) Long userId) {
-        log.info("Получен запрос PATCH /items/{itemId}.");
-        return new ResponseEntity<>(itemService.updateItem(itemId, item, userId), HttpStatus.OK);
+        return itemService.updateItem(itemId, item, userId);
     }
 
     @GetMapping
-    public ResponseEntity<List<ItemDto>> getItemsList(@RequestHeader(value = SHARER_USER_ID_HEADER) Long userId,
+    public List<ItemDto> getItemsList(@RequestHeader(value = SHARER_USER_ID_HEADER) Long userId,
                                                       @RequestParam(name = "from", defaultValue = "0") int from,
                                                       @RequestParam(name = "size", defaultValue = "10") int size) {
-        log.info("Получен запрос GET /items/.");
-        return new ResponseEntity<>(itemService.getItemsList(userId, from, size), HttpStatus.OK);
+        return itemService.getItemsList(userId, from, size);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ItemDto>> searchItems(@RequestParam String text,
+    public List<ItemDto> searchItems(@RequestParam String text,
                                                      @RequestParam(name = "from", defaultValue = "0") int from,
                                                      @RequestParam(name = "size", defaultValue = "10") int size) {
-        log.info("Получен запрос GET /items/search.");
-        return new ResponseEntity<>(itemService.searchItem(text, from, size), HttpStatus.OK);
+        return itemService.searchItem(text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<CommentDto> addComment(@PathVariable long itemId,
+    public CommentDto addComment(@PathVariable long itemId,
                                                  @Valid @RequestBody CommentDto comment,
                                                  @RequestHeader(value = SHARER_USER_ID_HEADER) Long userId) {
-        log.info("Получен запрос POST /items/{itemId}/comment.");
-        return new ResponseEntity<>(commentService.add(itemId, comment, userId), HttpStatus.OK);
+        return commentService.add(itemId, comment, userId);
     }
 }

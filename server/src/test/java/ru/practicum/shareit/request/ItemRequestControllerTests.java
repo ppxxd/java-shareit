@@ -78,7 +78,7 @@ public class ItemRequestControllerTests {
 
     @Test
     public void getRequestById() throws Exception {
-        when(requestService.getRequestById(1L, 1L)).thenReturn(requestResult);
+        when(requestService.getRequestById(1L)).thenReturn(requestResult);
 
         checkItemRequestProp(mockMvc.perform(get("/requests/1").header(USER_ID_HEADER, 1L)));
     }

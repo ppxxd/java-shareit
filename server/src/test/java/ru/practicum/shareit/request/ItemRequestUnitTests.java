@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -24,6 +25,7 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +72,7 @@ public class ItemRequestUnitTests {
                 .request(request)
                 .build();
 
-        when(userRepository.existsById(anyLong())).thenReturn(true);
+        Mockito.lenient().when(userRepository.existsById(anyLong())).thenReturn(true);
         when(itemRepository.findAllByRequestId(1L)).thenReturn(List.of(item));
     }
 
@@ -100,7 +102,7 @@ public class ItemRequestUnitTests {
     public void getRequestByIdTest() {
         when(requestRepository.getReferenceById(1L)).thenReturn(request);
 
-        ItemRequestDto result = requestService.getRequestById(1L, 2L);
+        ItemRequestDto result = requestService.getRequestById(1L);
 
         assertRequest(request, result);
     }

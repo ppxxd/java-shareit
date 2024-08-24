@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
@@ -9,10 +10,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Booking.BookingState;
 import ru.practicum.shareit.booking.model.Booking.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.exception.ObjectAccessException;
-import ru.practicum.shareit.exception.ObjectCreateException;
-import ru.practicum.shareit.exception.ObjectExistException;
-import ru.practicum.shareit.exception.ObjectNotAvailableException;
+import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -36,11 +34,12 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto addBooking(BookingDto bookingDto, long userId) {
         checkDate(bookingDto);
         Item item = getItemById(bookingDto.getItemId());
+        User user = getUserById(userId);
 
         if (!item.isAvailable()) {
             throw new ObjectNotAvailableException("Вещь не доступна!");
         }
-        User user = getUserById(userId);
+
         if (item.getOwner().equals(user)) {
             throw new ObjectAccessException("Вы не можете забронировать свои вещи!");
         }
@@ -55,7 +54,7 @@ public class BookingServiceImpl implements BookingService {
         Item item = getItemById(booking.getItemId());
 
         if (item.getOwner().getId() != userId)
-            throw new ObjectAccessException("У вас нет доступа к данному бронированию!");
+            throw new ObjectWrongOwnerException("У вас нет доступа к данному бронированию!");
         if (booking.getStatus().equals(BookingStatus.APPROVED) || booking.getStatus().equals(BookingStatus.REJECTED))
             throw new ObjectNotAvailableException("Бронь уже " + booking.getStatus());
 

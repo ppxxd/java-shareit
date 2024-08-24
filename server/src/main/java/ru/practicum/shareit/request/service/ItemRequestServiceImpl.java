@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.util.PageableUtil;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

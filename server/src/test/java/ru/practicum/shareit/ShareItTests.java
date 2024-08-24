@@ -13,7 +13,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 class ShareItTests {
-
 	@Autowired
 	private BookingController bookingController;
 	@Autowired

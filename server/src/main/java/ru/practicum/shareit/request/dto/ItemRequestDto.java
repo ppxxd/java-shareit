@@ -16,7 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemRequestDto {
     private long id;
-    @NotBlank
     private String description;
     private Date created;
     private List<RequestItemDto> items;

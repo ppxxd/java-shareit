@@ -18,11 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemDto {
     private long id;
-    @NotBlank
     private String name;
-    @NotNull
     private String description;
-    @NotNull
     private Boolean available;
     private User owner;
     private Long requestID;

@@ -8,8 +8,6 @@ import ru.practicum.shareit.booking.model.ItemBooking;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.user.model.User;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 @Data

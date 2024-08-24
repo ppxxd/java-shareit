@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.item.dto.RequestItemDto;
 
-import jakarta.validation.constraints.NotBlank;
 import java.util.Date;
 import java.util.List;
 
